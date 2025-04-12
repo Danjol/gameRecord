@@ -61,19 +61,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function renderGames() {
     const container = document.getElementById('gameList');
-    if (!container) return;
-
     container.innerHTML = '';
 
-    games.forEach(game => {
+    games.forEach((game, index) => {
         const wrapper = document.createElement('div');
         wrapper.style.border = '1px solid #ccc';
         wrapper.style.padding = '10px';
         wrapper.style.marginBottom = '20px';
         wrapper.style.borderRadius = '8px';
-
-        const playCountId = `playCount_${game.title}`;
-        const ratingId = `rating_${game.title}`;
 
         wrapper.innerHTML = `
             <h2>${game.title}</h2>
@@ -85,19 +80,30 @@ function renderGames() {
                 <strong>BGG Listing:</strong> <a href="${game.url}" target="_blank">${game.url}</a>
             </p>
             <p>
-                <strong>Playcount:</strong> 
-                <span id="${playCountId}">${game.playCount}</span>
-                <button data-title="${game.title}" class="addPlayBtn">+</button>
+                <strong>Playcount:</strong> <span>${game.playCount}</span>
+                <button class="increasePlay" data-index="${index}">+</button>
             </p>
             <p>
                 <strong>Rating:</strong>
-                <input type="range" min="0" max="10" step="1" value="${game.personalRating}" data-title="${game.title}" class="ratingSlider">
-                <span id="${ratingId}">${game.personalRating}</span>
+                <input type="range" min="0" max="10" step="1" value="${game.personalRating}" data-index="${index}">
+                <span>${game.personalRating}</span>
             </p>
+            <button class="deleteGame" data-title="${game.title}">Delete</button>
         `;
 
         container.appendChild(wrapper);
     });
+
+    const deleteButtons = document.querySelectorAll('.deleteGame');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', e => {
+            const title = e.target.getAttribute('data-title');
+            localStorage.removeItem(GAME_PREFIX + title);
+            games = games.filter(g => g.title !== title);
+            renderGames();
+        });
+    });
+}
 
     document.querySelectorAll('.addPlayBtn').forEach(button => {
         button.addEventListener('click', () => {
@@ -123,7 +129,6 @@ function renderGames() {
             }
         });
     });
-}
 
 const newGameForm = document.getElementById('newGameForm');
 

@@ -125,6 +125,34 @@ function renderGames() {
     });
 }
 
+const newGameForm = document.getElementById('newGameForm');
+
+if (newGameForm) {
+    newGameForm.addEventListener('submit', e => {
+        e.preventDefault();
+        const gameData = {
+            title: document.getElementById('title').value.trim(),
+            designer: document.getElementById('designer').value.trim(),
+            artist: document.getElementById('artist').value.trim(),
+            publisher: document.getElementById('publisher').value.trim(),
+            year: parseInt(document.getElementById('year').value),
+            players: document.getElementById('players').value.trim(),
+            time: document.getElementById('time').value.trim(),
+            difficulty: document.getElementById('difficulty').value.trim(),
+            url: document.getElementById('url').value.trim(),
+            playCount: 0,
+            personalRating: 0
+        };
+
+        const newGame = new Game(gameData);
+
+        saveGame(newGame);
+        games.push(newGame);
+        renderGames();
+        newGameForm.reset();
+    });
+}
+
 /*const sampleGame = new Game({
     "title": "Concordia",
     "designer": "Mac Gerdts",

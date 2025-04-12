@@ -10,6 +10,21 @@
 <body>
     <h1>Your personal Boardgame encyclopedia</h1>
     <input type="file" id="importSource" accept=".json">
+    <h2>Add a New Game</h2>
+    <form id="newGameForm">
+    <input type="text" placeholder="Title" id="title" required />
+    <input type="text" placeholder="Designer" id="designer" required />
+    <input type="text" placeholder="Artist" id="artist" required />
+    <input type="text" placeholder="Publisher" id="publisher" required />
+    <input type="number" placeholder="Year" id="year" required />
+    <input type="text" placeholder="Players (e.g. 2–4)" id="players" required />
+    <input type="text" placeholder="Time (e.g. 60 mins)" id="time" required />
+    <input type="text" placeholder="Difficulty (e.g. Medium)" id="difficulty" required />
+    <input type="url" placeholder="BoardGameGeek URL" id="url" required />
+    <button type="submit">Add Game</button>
+    </form>
+
+    <hr />
     <div id="gameList"></div>
 </body>
 </html>

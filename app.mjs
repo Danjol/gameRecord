@@ -56,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     games = loadAllGames();
-    console.log("Loaded games:", games);
     renderGames();
 });
 
@@ -73,6 +72,9 @@ function renderGames() {
         wrapper.style.marginBottom = '20px';
         wrapper.style.borderRadius = '8px';
 
+        const playCountId = `playCount_${game.title}`;
+        const ratingId = `rating_${game.title}`;
+
         wrapper.innerHTML = `
             <h2>${game.title}</h2>
             <p><strong>Year:</strong> ${game.year} &nbsp; <strong>Players:</strong> ${game.players} &nbsp; <strong>Time:</strong> ${game.time} &nbsp; <strong>Difficulty:</strong> ${game.difficulty}</p>
@@ -83,17 +85,43 @@ function renderGames() {
                 <strong>BGG Listing:</strong> <a href="${game.url}" target="_blank">${game.url}</a>
             </p>
             <p>
-                <strong>Playcount:</strong> <span>${game.playCount}</span>
-                <button>+</button>
+                <strong>Playcount:</strong> 
+                <span id="${playCountId}">${game.playCount}</span>
+                <button data-title="${game.title}" class="addPlayBtn">+</button>
             </p>
             <p>
                 <strong>Rating:</strong>
-                <input type="range" min="0" max="10" step="1" value="${game.personalRating}">
-                <span>${game.personalRating}</span>
+                <input type="range" min="0" max="10" step="1" value="${game.personalRating}" data-title="${game.title}" class="ratingSlider">
+                <span id="${ratingId}">${game.personalRating}</span>
             </p>
         `;
 
         container.appendChild(wrapper);
+    });
+
+    document.querySelectorAll('.addPlayBtn').forEach(button => {
+        button.addEventListener('click', () => {
+            const title = button.dataset.title;
+            const game = games.find(g => g.title === title);
+            if (game) {
+                game.playCount += 1;
+                document.getElementById(`playCount_${title}`).textContent = game.playCount;
+                saveGame(game);
+            }
+        });
+    });
+
+    document.querySelectorAll('.ratingSlider').forEach(slider => {
+        slider.addEventListener('input', () => {
+            const title = slider.dataset.title;
+            const game = games.find(g => g.title === title);
+            if (game) {
+                const newRating = parseInt(slider.value, 10);
+                game.personalRating = newRating;
+                document.getElementById(`rating_${title}`).textContent = newRating;
+                saveGame(game);
+            }
+        });
     });
 }
 

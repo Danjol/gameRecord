@@ -10,6 +10,13 @@
 <body>
     <h1>Your personal Boardgame encyclopedia</h1>
     <input type="file" id="importSource" accept=".json">
+        <label for="sortGames">Sort by: </label>
+    <select id="sortGames">
+    <option value="playCount">Play Count</option>
+    <option value="personalRating">Rating</option>
+    <option value="difficulty">Difficulty</option>
+    <option value="players">Player Count</option>
+    </select>
     <h2>Add a New Game</h2>
     <form id="newGameForm">
     <input type="text" placeholder="Title" id="title" required />

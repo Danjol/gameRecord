@@ -55,9 +55,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const sortSelect = document.getElementById('sortGames');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', () => {
+            sortGames(sortSelect.value);
+            renderGames();
+        });
+    }
+
     games = loadAllGames();
     renderGames();
 });
+
+function sortGames(by) {
+    games.sort((a, b) => {
+        if (by === 'difficulty') {
+            return a.difficulty.localeCompare(b.difficulty);
+        }
+        if (by === 'players') {
+            const aMin = parseInt(a.players);
+            const bMin = parseInt(b.players);
+            return aMin - bMin;
+        }
+        return b[by] - a[by];
+    });
+}
 
 function renderGames() {
     const container = document.getElementById('gameList');
@@ -80,13 +102,14 @@ function renderGames() {
                 <strong>BGG Listing:</strong> <a href="${game.url}" target="_blank">${game.url}</a>
             </p>
             <p>
-                <strong>Playcount:</strong> <span>${game.playCount}</span>
-                <button class="increasePlay" data-index="${index}">+</button>
+            <strong>Playcount:</strong>
+            <span id="playCount_${game.title}">${game.playCount}</span>
+            <button class="addPlayBtn" data-title="${game.title}">+</button>
             </p>
             <p>
-                <strong>Rating:</strong>
-                <input type="range" min="0" max="10" step="1" value="${game.personalRating}" data-index="${index}">
-                <span>${game.personalRating}</span>
+            <strong>Rating:</strong>
+            <input type="range" min="0" max="10" step="1" value="${game.personalRating}" class="ratingSlider" data-title="${game.title}">
+            <span id="rating_${game.title}">${game.personalRating}</span>
             </p>
             <button class="deleteGame" data-title="${game.title}">Delete</button>
         `;
@@ -103,7 +126,6 @@ function renderGames() {
             renderGames();
         });
     });
-}
 
     document.querySelectorAll('.addPlayBtn').forEach(button => {
         button.addEventListener('click', () => {
@@ -116,7 +138,7 @@ function renderGames() {
             }
         });
     });
-
+    
     document.querySelectorAll('.ratingSlider').forEach(slider => {
         slider.addEventListener('input', () => {
             const title = slider.dataset.title;
@@ -129,6 +151,7 @@ function renderGames() {
             }
         });
     });
+}
 
 const newGameForm = document.getElementById('newGameForm');
 

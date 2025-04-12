@@ -1,14 +1,12 @@
-import Game from './models/Game.js';
+import Game from './modules/game.mjs';
 
 const GAME_PREFIX = 'game_';
 let games = [];
-
 
 function saveGame(game) {
     if (!(game instanceof Game)) return;
     localStorage.setItem(GAME_PREFIX + game.title, JSON.stringify(game));
 }
-
 
 function loadAllGames() {
     const loaded = [];
@@ -22,11 +20,9 @@ function loadAllGames() {
     return loaded;
 }
 
-
 function exportGamesToJSON() {
     return JSON.stringify(games, null, 2);
 }
-
 
 function importGamesFromJSON(json) {
     try {
@@ -37,6 +33,7 @@ function importGamesFromJSON(json) {
                 saveGame(game);
             });
             games = loadAllGames();
+            renderGames();
         }
     } catch (err) {
         console.error("Failed to import games:", err);
@@ -60,7 +57,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
     games = loadAllGames();
     console.log("Loaded games:", games);
+    renderGames();
 });
+
+function renderGames() {
+    const container = document.getElementById('gameList');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    games.forEach(game => {
+        const wrapper = document.createElement('div');
+        wrapper.style.border = '1px solid #ccc';
+        wrapper.style.padding = '10px';
+        wrapper.style.marginBottom = '20px';
+        wrapper.style.borderRadius = '8px';
+
+        wrapper.innerHTML = `
+            <h2>${game.title}</h2>
+            <p><strong>Year:</strong> ${game.year} &nbsp; <strong>Players:</strong> ${game.players} &nbsp; <strong>Time:</strong> ${game.time} &nbsp; <strong>Difficulty:</strong> ${game.difficulty}</p>
+            <p style="margin-left: 20px;">
+                <strong>Designer:</strong> ${game.designer}<br>
+                <strong>Artist:</strong> ${game.artist}<br>
+                <strong>Publisher:</strong> ${game.publisher}<br>
+                <strong>BGG Listing:</strong> <a href="${game.url}" target="_blank">${game.url}</a>
+            </p>
+            <p>
+                <strong>Playcount:</strong> <span>${game.playCount}</span>
+                <button>+</button>
+            </p>
+            <p>
+                <strong>Rating:</strong>
+                <input type="range" min="0" max="10" step="1" value="${game.personalRating}">
+                <span>${game.personalRating}</span>
+            </p>
+        `;
+
+        container.appendChild(wrapper);
+    });
+}
 
 /*const sampleGame = new Game({
     "title": "Concordia",
